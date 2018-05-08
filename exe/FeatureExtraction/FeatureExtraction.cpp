@@ -65,6 +65,9 @@
 //AWS
 #include <aws/core/Aws.h>
 #include <aws/core/utils/Outcome.h>
+#include <aws/dynamodb/DynamoDBClient.h>
+#include <aws/dynamodb/model/UpdateItemRequest.h>
+#include <aws/dynamodb/model/UpdateItemResult.h>
 
 #ifndef CONFIG_DIR
 #define CONFIG_DIR "~"
