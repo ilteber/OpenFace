@@ -12,7 +12,7 @@ add_definitions(-DCONFIG_DIR="${CONFIG_DIR}")
 find_package( BLAS REQUIRED )
 include_directories( ${BLAS_INCLUDE_DIRS} )
 LINK_DIRECTORIES(${BLAS_LIBRARY_DIRS})	
-
+find_package( AWSSDK REQUIRED )
 find_package( OpenCV REQUIRED )
 
 MESSAGE("OpenCV information:") 

@@ -4,7 +4,7 @@
 //
 // ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 //
-// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS LICENSE AGREEMENT.  
+// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS LICENSE AGREEMENT.
 // IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR DOWNLOAD THE SOFTWARE.
 //
 // License can be found in OpenFace-license.txt
@@ -15,20 +15,20 @@
 //
 //       OpenFace: an open source facial behavior analysis toolkit
 //       Tadas Baltrušaitis, Peter Robinson, and Louis-Philippe Morency
-//       in IEEE Winter Conference on Applications of Computer Vision, 2016  
+//       in IEEE Winter Conference on Applications of Computer Vision, 2016
 //
 //       Rendering of Eyes for Eye-Shape Registration and Gaze Estimation
-//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter Robinson, and Andreas Bulling 
-//       in IEEE International. Conference on Computer Vision (ICCV),  2015 
+//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter Robinson, and Andreas Bulling
+//       in IEEE International. Conference on Computer Vision (ICCV),  2015
 //
 //       Cross-dataset learning and person-speci?c normalisation for automatic Action Unit detection
-//       Tadas Baltrušaitis, Marwa Mahmoud, and Peter Robinson 
-//       in Facial Expression Recognition and Analysis Challenge, 
-//       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
+//       Tadas Baltrušaitis, Marwa Mahmoud, and Peter Robinson
+//       in Facial Expression Recognition and Analysis Challenge,
+//       IEEE International Conference on Automatic Face and Gesture Recognition, 2015
 //
 //       Constrained Local Neural Fields for robust facial landmark detection in the wild.
-//       Tadas Baltrušaitis, Peter Robinson, and Louis-Philippe Morency. 
-//       in IEEE Int. Conference on Computer Vision Workshops, 300 Faces in-the-Wild Challenge, 2013.    
+//       Tadas Baltrušaitis, Peter Robinson, and Louis-Philippe Morency.
+//       in IEEE Int. Conference on Computer Vision Workshops, 300 Faces in-the-Wild Challenge, 2013.
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -61,6 +61,10 @@
 #include <SequenceCapture.h>
 #include <Visualizer.h>
 #include <VisualizationUtils.h>
+
+//AWS
+#include <aws/core/Aws.h>
+#include <aws/core/utils/Outcome.h>
 
 #ifndef CONFIG_DIR
 #define CONFIG_DIR "~"
@@ -110,7 +114,11 @@ int main (int argc, char **argv)
 		cout << " https://github.com/TadasBaltrusaitis/OpenFace/wiki/Command-line-arguments";
 		return 0;
 	}
-
+  int videoId = -1
+  if(argv[argc-2] == std::string("-v")){
+        std::cout << "esitt" << std::endl;
+        videoId = argv[argc-2]
+  }
 	// Load the modules that are being used for tracking and face analysis
 	// Load face landmark detector
 	LandmarkDetector::FaceModelParameters det_parameters(arguments);
@@ -148,7 +156,7 @@ int main (int argc, char **argv)
 			break;
 
 		INFO_STREAM("Device or file opened");
-		
+
 		if (sequence_reader.IsWebcam())
 		{
 			INFO_STREAM("WARNING: using a webcam in feature extraction, Action Unit predictions will not be as accurate in real-time webcam mode");
@@ -157,7 +165,7 @@ int main (int argc, char **argv)
 		}
 
 		cv::Mat captured_image;
-		
+
 		Utilities::RecorderOpenFaceParameters recording_params(arguments, true, sequence_reader.IsWebcam(),
 			sequence_reader.fx, sequence_reader.fy, sequence_reader.cx, sequence_reader.cy, sequence_reader.fps);
 		if (!face_model.eye_model)
@@ -235,7 +243,7 @@ int main (int argc, char **argv)
 			open_face_rec.SetObservationHOG(detection_success, hog_descriptor, num_hog_rows, num_hog_cols, 31); // The number of channels in HOG is fixed at the moment, as using FHOG
 			open_face_rec.SetObservationVisualization(visualizer.GetVisImage());
 			open_face_rec.SetObservationActionUnits(face_analyser.GetCurrentAUsReg(), face_analyser.GetCurrentAUsClass());
-			open_face_rec.SetObservationLandmarks(face_model.detected_landmarks, face_model.GetShape(sequence_reader.fx, sequence_reader.fy, sequence_reader.cx, sequence_reader.cy), 
+			open_face_rec.SetObservationLandmarks(face_model.detected_landmarks, face_model.GetShape(sequence_reader.fx, sequence_reader.fy, sequence_reader.cx, sequence_reader.cy),
 				face_model.params_global, face_model.params_local, face_model.detection_certainty, detection_success);
 			open_face_rec.SetObservationPose(pose_estimate);
 			open_face_rec.SetObservationGaze(gazeDirection0, gazeDirection1, gazeAngle, LandmarkDetector::CalculateAllEyeLandmarks(face_model), LandmarkDetector::Calculate3DEyeLandmarks(face_model, sequence_reader.fx, sequence_reader.fy, sequence_reader.cx, sequence_reader.cy));
@@ -244,23 +252,58 @@ int main (int argc, char **argv)
 			open_face_rec.SetObservationFrameNumber(sequence_reader.GetFrameNumber());
 			open_face_rec.SetObservationFaceAlign(sim_warped_img);
 			open_face_rec.WriteObservation();
-			
-			// Reporting progress
-			if(sequence_reader.GetProgress() >= reported_completion / 10.0)
-			{
-				cout << reported_completion * 10 << "% ";
-				if (reported_completion == 10)
-				{
-					cout << endl;
-				}
-				reported_completion = reported_completion + 1;
-			}
+			Aws::SDKOptions options;
+    			Aws::InitAPI(options);
+    			{
+				Aws::Client::ClientConfiguration clientConfig;
+				clientConfig.region = "us-east-2";
+				Aws::DynamoDB::DynamoDBClient dynamoClient(clientConfig);
+				Aws::DynamoDB::Model::UpdateItemRequest updateFaceGazePercent;
+				Aws::String video_table("videos");
+        updateFaceGazePercent.SetTableName(video_table);
+				Aws::DynamoDB::Model::AttributeValue av;
+        int facegazeprgrs =  videoId;
+        if(facegazeprgrs == -1)
+          error("Sorry");
+        std::string facegazeprgrs_str = std::to_string(facegazeprgrs);
+        Aws::String facegazeprgrs_aws(facegazeprgrs_str.c_str());
+        av.setN(facegazeprgrs_aws);
+        updateFaceGazePercent.addKey("Id",av);
+        av.setN("1");
+        updateFaceGazePercent.addKey("type",av);
+        Aws::DynamoDB::Model::AttributeValue val;
 
+				// Reporting progress
+				if(sequence_reader.GetProgress() >= reported_completion / 10.0)
+				{
+          cout << reported_completion * 10 << "% ";
+          std::string tempPrgrs = std::to_string(reported_completion * 10 );
+          Aws::String prgrsStr(tempPrgrs.c_str());
+          val.SetN(prgrsStr);
+          Aws::DynamoDB::Model::AttributeValueUpdate avu;
+          avu.SetValue(val);
+          updatePosePercent.AddAttributeUpdates("pose_progress",avu);
+          const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamoClient.UpdateItem(updateFaceGazePercent);
+          if(result.IsSuccess()){
+            std::cout << "Successfully updated" << std::endl;
+          }
+          else{
+            std::cout << "Could not update facegaze" << std::endl;
+            std::cout << result.GetError().GetMessage() << std::endl;
+          }
+
+					if (reported_completion == 10)
+					{
+						cout << endl;
+					}
+					reported_completion = reported_completion + 1;
+				}
+			}
 			// Grabbing the next frame in the sequence
 			captured_image = sequence_reader.GetNextFrame();
 
 		}
-		
+
 		open_face_rec.Close();
 
 		if (recording_params.outputAUs())
@@ -274,6 +317,6 @@ int main (int argc, char **argv)
 		face_model.Reset();
 
 	}
-
+	Aws::ShutdownAPI(options);
 	return 0;
 }
