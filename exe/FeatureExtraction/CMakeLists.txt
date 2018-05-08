@@ -7,7 +7,7 @@ add_executable(FeatureExtraction FeatureExtraction.cpp)
 find_package(AWSSDK)
 SET(SERVICE core dynamodb)
 AWSSDK_LIB_DEPS(SERVICE DEPS)
-link_directories("${AWSSDK_LIB_DIR}"
+link_directories("${AWSSDK_LIB_DIR}")
 
 
 # Local libraries
