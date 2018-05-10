@@ -302,12 +302,12 @@ int main (int argc, char **argv)
 					reported_completion = reported_completion + 1;
 				}
 			}
-      Aws::ShutdownAPI(options);
+
 			// Grabbing the next frame in the sequence
 			captured_image = sequence_reader.GetNextFrame();
 
 		}
-
+    Aws::ShutdownAPI(options);
 		open_face_rec.Close();
 
 		if (recording_params.outputAUs())
