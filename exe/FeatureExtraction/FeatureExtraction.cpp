@@ -184,7 +184,9 @@ int main (int argc, char **argv)
 
 		// For reporting progress
 		double reported_completion = 0;
-
+    Aws::SDKOptions options;
+    Aws::InitAPI(options);
+    {
 		INFO_STREAM("Starting tracking");
 		while (!captured_image.empty())
 		{
@@ -255,9 +257,7 @@ int main (int argc, char **argv)
 			open_face_rec.SetObservationFrameNumber(sequence_reader.GetFrameNumber());
 			open_face_rec.SetObservationFaceAlign(sim_warped_img);
 			open_face_rec.WriteObservation();
-			Aws::SDKOptions options;
-    	Aws::InitAPI(options);
-    	{
+
 				Aws::Client::ClientConfiguration clientConfig;
 				clientConfig.region = "us-east-2";
 				Aws::DynamoDB::DynamoDBClient dynamoClient(clientConfig);
@@ -302,6 +302,7 @@ int main (int argc, char **argv)
 					reported_completion = reported_completion + 1;
 				}
 			}
+      Aws::ShutdownAPI(options);
 			// Grabbing the next frame in the sequence
 			captured_image = sequence_reader.GetNextFrame();
 
@@ -320,6 +321,6 @@ int main (int argc, char **argv)
 		face_model.Reset();
 
 	}
-	Aws::ShutdownAPI(options);
+
 	return 0;
 }
