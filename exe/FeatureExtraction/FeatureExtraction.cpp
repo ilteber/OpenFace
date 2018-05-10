@@ -256,8 +256,8 @@ int main (int argc, char **argv)
 			open_face_rec.SetObservationFaceAlign(sim_warped_img);
 			open_face_rec.WriteObservation();
 			Aws::SDKOptions options;
-    			Aws::InitAPI(options);
-    			{
+    	Aws::InitAPI(options);
+    	{
 				Aws::Client::ClientConfiguration clientConfig;
 				clientConfig.region = "us-east-2";
 				Aws::DynamoDB::DynamoDBClient dynamoClient(clientConfig);
@@ -285,7 +285,7 @@ int main (int argc, char **argv)
           val.SetN(prgrsStr);
           Aws::DynamoDB::Model::AttributeValueUpdate avu;
           avu.SetValue(val);
-          updatePosePercent.AddAttributeUpdates("pose_progress",avu);
+          updateFaceGazePercent.AddAttributeUpdates("pose_progress",avu);
           const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamoClient.UpdateItem(updateFaceGazePercent);
           if(result.IsSuccess()){
             std::cout << "Successfully updated" << std::endl;
