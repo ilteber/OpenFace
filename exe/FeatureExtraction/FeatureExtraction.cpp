@@ -117,7 +117,7 @@ int main (int argc, char **argv)
 		cout << " https://github.com/TadasBaltrusaitis/OpenFace/wiki/Command-line-arguments";
 		return 0;
 	}
-  int videoId = -1
+  int videoId = -1;
   if(argv[argc-2] == std::string("-v")){
         std::cout << "esitt" << std::endl;
         videoId = argv[argc-2]
