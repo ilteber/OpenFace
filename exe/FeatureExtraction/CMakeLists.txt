@@ -2,7 +2,8 @@
 include_directories(${TBB_ROOT_DIR}/include)
 
 add_executable(FeatureExtraction FeatureExtraction.cpp)
-
+#AWSLIBS
+set(AWSSDK_LIBS "aws-cpp-sdk-core;aws-cpp-sdk-dynamodb")
 # AWS PART
 find_package(AWSSDK)
 SET(SERVICE core dynamodb)
