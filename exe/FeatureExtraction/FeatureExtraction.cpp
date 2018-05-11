@@ -276,25 +276,26 @@ int main (int argc, char **argv)
         av.SetN("1");
         updateFaceGazePercent.AddKey("type",av);
         Aws::DynamoDB::Model::AttributeValue val;
-
+        std::cout<<"hello"<< std::endl;
 				// Reporting progress
+        std::string tempPrgrs = std::to_string(reported_completion * 10 );
+        Aws::String prgrsStr(tempPrgrs.c_str());
+        val.SetN(prgrsStr);
+        Aws::DynamoDB::Model::AttributeValueUpdate avu;
+        avu.SetValue(val);
+        updateFaceGazePercent.AddAttributeUpdates("faceStatus",avu);
+        const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamoClient.UpdateItem(updateFaceGazePercent);
+        if(result.IsSuccess()){
+          std::cout << "Successfully updated" << std::endl;
+        }
+        else{
+          std::cout << "Could not update facegaze" << std::endl;
+          std::cout << result.GetError().GetMessage() << std::endl;
+        }
+
 				if(sequence_reader.GetProgress() >= reported_completion / 10.0)
 				{
           cout << reported_completion * 10 << "% ";
-          std::string tempPrgrs = std::to_string(reported_completion * 10 );
-          Aws::String prgrsStr(tempPrgrs.c_str());
-          val.SetN(prgrsStr);
-          Aws::DynamoDB::Model::AttributeValueUpdate avu;
-          avu.SetValue(val);
-          updateFaceGazePercent.AddAttributeUpdates("faceStatus",avu);
-          const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamoClient.UpdateItem(updateFaceGazePercent);
-          if(result.IsSuccess()){
-            std::cout << "Successfully updated" << std::endl;
-          }
-          else{
-            std::cout << "Could not update facegaze" << std::endl;
-            std::cout << result.GetError().GetMessage() << std::endl;
-          }
 
 					if (reported_completion == 10)
 					{
@@ -302,11 +303,10 @@ int main (int argc, char **argv)
 					}
 					reported_completion = reported_completion + 1;
 				}
-			}
-
-			// Grabbing the next frame in the sequence
-			captured_image = sequence_reader.GetNextFrame();
-
+        // std::cout<<"hello"<< std::endl;
+        // Grabbing the next frame in the sequence
+        captured_image = sequence_reader.GetNextFrame();
+      }
 		}
     Aws::ShutdownAPI(options);
 		open_face_rec.Close();
