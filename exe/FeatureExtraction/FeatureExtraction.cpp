@@ -269,9 +269,9 @@ int main (int argc, char **argv)
           FATAL_STREAM("There is no video id");
         std::string facegazeprgrs_str = std::to_string(facegazeprgrs);
         Aws::String facegazeprgrs_aws(facegazeprgrs_str.c_str());
-        av.setN(facegazeprgrs_aws);
+        av.SetN(facegazeprgrs_aws);
         updateFaceGazePercent.addKey("Id",av);
-        av.setN("1");
+        av.SetN("1");
         updateFaceGazePercent.addKey("type",av);
         Aws::DynamoDB::Model::AttributeValue val;
 
