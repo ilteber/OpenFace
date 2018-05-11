@@ -38,7 +38,7 @@
 // System includes
 #include <fstream>
 #include <sstream>
-
+#include <string>
 // OpenCV includes
 #include <opencv2/videoio/videoio.hpp>  // Video write
 #include <opencv2/videoio/videoio_c.h>  // Video write
@@ -120,7 +120,7 @@ int main (int argc, char **argv)
   int videoId = -1;
   if(argv[argc-2] == std::string("-v")){
         std::cout << "esitt" << std::endl;
-        videoId = std::stoi(argv[argc-2]);
+        videoId = stoi(argv[argc-2]);
   }
 	// Load the modules that are being used for tracking and face analysis
 	// Load face landmark detector
