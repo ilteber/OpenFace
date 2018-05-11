@@ -267,7 +267,7 @@ int main (int argc, char **argv)
 				Aws::DynamoDB::Model::AttributeValue av;
         int facegazeprgrs =  videoId;
         if(facegazeprgrs == -1)
-          FATAL_STREAM('There is no video id');
+          FATAL_STREAM("There is no video id");
         std::string facegazeprgrs_str = std::to_string(facegazeprgrs);
         Aws::String facegazeprgrs_aws(facegazeprgrs_str.c_str());
         av.setN(facegazeprgrs_aws);
