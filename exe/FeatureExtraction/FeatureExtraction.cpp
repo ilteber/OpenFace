@@ -262,8 +262,7 @@ int main (int argc, char **argv)
 				clientConfig.region = "us-east-2";
 				Aws::DynamoDB::DynamoDBClient dynamoClient(clientConfig);
 				Aws::DynamoDB::Model::UpdateItemRequest updateFaceGazePercent;
-				Aws::String video_table("videos");
-        updateFaceGazePercent.SetTableName(video_table);
+        updateFaceGazePercent.SetTableName(Aws::String("videos"));
 				Aws::DynamoDB::Model::AttributeValue av;
         int facegazeprgrs =  videoId;
         if(facegazeprgrs == -1)
