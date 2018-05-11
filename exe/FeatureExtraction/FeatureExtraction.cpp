@@ -120,7 +120,7 @@ int main (int argc, char **argv)
   int videoId = -1;
   if(argv[argc-2] == std::string("-v")){
         std::cout << "esitt" << std::endl;
-        videoId = argv[argc-2];
+        videoId = std::to_string(argv[argc-2]);
   }
 	// Load the modules that are being used for tracking and face analysis
 	// Load face landmark detector
