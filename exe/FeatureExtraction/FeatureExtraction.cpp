@@ -270,9 +270,9 @@ int main (int argc, char **argv)
         std::string facegazeprgrs_str = std::to_string(facegazeprgrs);
         Aws::String facegazeprgrs_aws(facegazeprgrs_str.c_str());
         av.SetN(facegazeprgrs_aws);
-        updateFaceGazePercent.addKey("Id",av);
+        updateFaceGazePercent.AddKey("Id",av);
         av.SetN("1");
-        updateFaceGazePercent.addKey("type",av);
+        updateFaceGazePercent.AddKey("type",av);
         Aws::DynamoDB::Model::AttributeValue val;
 
 				// Reporting progress
