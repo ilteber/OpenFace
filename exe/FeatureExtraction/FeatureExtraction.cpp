@@ -260,31 +260,7 @@ int main (int argc, char **argv)
 			open_face_rec.SetObservationFaceAlign(sim_warped_img);
 			open_face_rec.WriteObservation();
 
-				Aws::Client::ClientConfiguration clientConfig;
-				clientConfig.region = "us-east-2";
-				Aws::DynamoDB::DynamoDBClient dynamoClient(clientConfig);
-				Aws::DynamoDB::Model::UpdateItemRequest updateFaceGazePercent;
-        updateFaceGazePercent.SetTableName(Aws::String("videos"));
-				Aws::DynamoDB::Model::AttributeValue av;
-        int facegazeprgrs =  videoId;
-        if(facegazeprgrs == -1)
-          FATAL_STREAM("There is no video id");
-        std::string facegazeprgrs_str = std::to_string(facegazeprgrs);
-        Aws::String facegazeprgrs_aws(facegazeprgrs_str.c_str());
-        av.SetN(facegazeprgrs_aws);
-        updateFaceGazePercent.AddKey("Id",av);
-        av.SetN("1");
-        updateFaceGazePercent.AddKey("type",av);
-        Aws::DynamoDB::Model::AttributeValue val;
-        std::cout<<"hello"<< std::endl;
-				// Reporting progress
-        std::string tempPrgrs = std::to_string(reported_completion * 10 );
-        Aws::String prgrsStr(tempPrgrs.c_str());
-        val.SetN(prgrsStr);
-        Aws::DynamoDB::Model::AttributeValueUpdate avu;
-        avu.SetValue(val);
-        updateFaceGazePercent.AddAttributeUpdates("faceStatus",avu);
-        const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamoClient.UpdateItem(updateFaceGazePercent);
+
         if(result.IsSuccess()){
           std::cout << "Successfully updated" << std::endl;
         }
@@ -293,8 +269,33 @@ int main (int argc, char **argv)
           std::cout << result.GetError().GetMessage() << std::endl;
         }
 
-				if(sequence_reader.GetProgress() >= reported_completion / 10.0)
+				if(sequence_reader.GetProgress() >= reported_completion > 5)
 				{
+          // Aws::Client::ClientConfiguration clientConfig;
+          // clientConfig.region = "us-east-2";
+          // Aws::DynamoDB::DynamoDBClient dynamoClient(clientConfig);
+          // Aws::DynamoDB::Model::UpdateItemRequest updateFaceGazePercent;
+          // updateFaceGazePercent.SetTableName(Aws::String("videos"));
+          // Aws::DynamoDB::Model::AttributeValue av;
+          // int facegazeprgrs =  videoId;
+          // if(facegazeprgrs == -1)
+          //   FATAL_STREAM("There is no video id");
+          // std::string facegazeprgrs_str = std::to_string(facegazeprgrs);
+          // Aws::String facegazeprgrs_aws(facegazeprgrs_str.c_str());
+          // av.SetN(facegazeprgrs_aws);
+          // updateFaceGazePercent.AddKey("Id",av);
+          // av.SetN("1");
+          // updateFaceGazePercent.AddKey("type",av);
+          // Aws::DynamoDB::Model::AttributeValue val;
+          // // std::cout<<"hello"<< std::endl;
+          // // Reporting progress
+          // std::string tempPrgrs = std::to_string(reported_completion * 10 );
+          // Aws::String prgrsStr(tempPrgrs.c_str());
+          // val.SetN(prgrsStr);
+          // Aws::DynamoDB::Model::AttributeValueUpdate avu;
+          // avu.SetValue(val);
+          // updateFaceGazePercent.AddAttributeUpdates("faceStatus",avu);
+          // const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamoClient.UpdateItem(updateFaceGazePercent);
           cout << reported_completion * 10 << "% ";
 
 					if (reported_completion == 10)
