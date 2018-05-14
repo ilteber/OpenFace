@@ -262,7 +262,7 @@ int main (int argc, char **argv)
 
 
 
-				if(sequence_reader.GetProgress() >= reported_completion / 5)
+				if(sequence_reader.GetProgress() >= reported_completion / 10)
 				{
 
           Aws::Client::ClientConfiguration clientConfig;
@@ -298,9 +298,9 @@ int main (int argc, char **argv)
             std::cout << "Could not update facegaze" << std::endl;
             std::cout << result.GetError().GetMessage() << std::endl;
           }
-          cout << reported_completion * 5 << "% ";
+          cout << reported_completion * 10 << "% ";
 
-					if (reported_completion == 5)
+					if (reported_completion == 10)
 					{
 						cout << endl;
 					}
