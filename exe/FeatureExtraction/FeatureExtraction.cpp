@@ -289,6 +289,7 @@ int main (int argc, char **argv)
           Aws::DynamoDB::Model::AttributeValueUpdate avu;
           avu.SetValue(val);
           updateFaceGazePercent.AddAttributeUpdates("faceStatus",avu);
+          updateFaceGazePercent.AddAttributeUpdates("gazeStatus",avu);
           const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamoClient.UpdateItem(updateFaceGazePercent);
           if(result.IsSuccess()){
             std::cout << "Successfully updated" << std::endl;
